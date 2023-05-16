@@ -6,6 +6,11 @@ const password = document.getElementById("password");
 const passwordConfirm = document.getElementById("passwordConfirm");
 
 //? Functions
+// Get Field name
+function getFieldName(input) {
+  return input.id.charAt(0).toUpperCase() + input.id.slice(1);
+}
+
 // Shows error outline & message
 function showError(input, message) {
   const formControl = input.parentElement;
@@ -21,15 +26,14 @@ function showSuccess(input) {
 }
 
 // Check if email is valid
-function isValidEmail(email) {
+function checkEmail(input) {
   // Regex from stackOverflow
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
-  return emailRegex.test(email);
-}
-
-// Get Field name
-function getFieldName(input) {
-  return input.id.charAt(0).toUpperCase() + input.id.slice(1);
+  if (emailRegex.test(input.value.trim())) {
+    showSuccess(input);
+  } else {
+    showError(input, "Email is not valid");
+  }
 }
 
 // Check required fields
@@ -44,9 +48,31 @@ function checkRequired(inputArr) {
   });
 }
 
+// Check input length
+function checkLength(input, min, max) {
+  if (input.value.length < min) {
+    showError(input, `${getFieldName(input)} must be at least ${min} characters`);
+  } else if (input.value.length > max) {
+    showError(input, `${getFieldName(input)} must be less than ${max} characters`);
+  } else {
+    showSuccess(input);
+  }
+}
+
+// Check passwords match
+function checkPasswordsMatch(input1, input2) {
+  if (input1.value !== input2.value) {
+    showError(input2, "Passwords do not match");
+  }
+}
+
 //* Event Listener
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   
   checkRequired([username, email, password, passwordConfirm]);
+  checkLength(username, 3, 15);
+  checkLength(password, 8, 20)
+  checkEmail(email);
+  checkPasswordsMatch(password, passwordConfirm);
 });
