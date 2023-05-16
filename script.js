@@ -6,7 +6,7 @@ const password = document.getElementById("password");
 const passwordConfirm = document.getElementById("passwordConfirm");
 
 //? Functions
-// Show input error message
+// Shows error outline & message
 function showError(input, message) {
   const formControl = input.parentElement;
   formControl.className = "form-control error";
@@ -14,7 +14,7 @@ function showError(input, message) {
   small.innerText = message;
 };
 
-// Show success outline
+// Shows success outline
 function showSuccess(input) {
   const formControl = input.parentElement;
   formControl.className = "form-control success";
@@ -27,33 +27,26 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
+// Get Field name
+function getFieldName(input) {
+  return input.id.charAt(0).toUpperCase() + input.id.slice(1);
+}
+
+// Check required fields
+function checkRequired(inputArr) {
+  inputArr.forEach((input) => {
+    if (input.value.trim() === "") {
+      console.log(input);
+      showError(input, `${getFieldName(input)} is Required`);
+    } else {
+      showSuccess(input);
+    }
+  });
+}
+
 //* Event Listener
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   
-  if (username.value === "") {
-    showError(username, "Username is required");
-  } else {
-    showSuccess(username);
-  }
-
-  if (email.value === "") {
-    showError(email, "Email is required");
-  } else if (!isValidEmail(email.value)) {
-    showError(email, "Email is not valid")
-  } else {
-    showSuccess(email);
-  }
-
-  if (password.value === "") {
-    showError(password, "Password is required");
-  } else {
-    showSuccess(password);
-  }
-
-  if (passwordConfirm.value === "") {
-    showError(passwordConfirm, "Confirm Password is required");
-  } else {
-    showSuccess(passwordConfirm);
-  }
+  checkRequired([username, email, password, passwordConfirm]);
 });
